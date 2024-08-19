@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spelletron</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Spelletron</h1>
+        <form method="POST" action="/">
+            <label for="text">Paste your text here:</label>
+            <textarea name="text" rows="10" cols="50">{{ text }}</textarea>
+            <label for="max_distance">MAXIMUM LETTER ALTERNATION YOU ARE LOOKING FOR:</label>
+            <input type="number" name="max_distance" required>
+            <input type="submit" value="Check Spelling">
+        </form>
+
+        {% if message %}
+        <h2>{{ message }}</h2>
+        {% endif %}
+
+        {% if corrections %}
+        <form method="POST" action="/update_text">
+            <input type="hidden" name="original_text" value="{{ text }}">
+            <ul>
+            {% for incorrect, suggestions in corrections.items() %}
+                <li>{{ incorrect }}:
+                    <select name="correction">
+                        <option value="">{{ incorrect }}</option>
+                        {% for suggestion in suggestions %}
+                        <option value="{{ incorrect }}:{{ suggestion }}">{{ suggestion }}</option>
+                        {% endfor %}
+                    </select>
+                </li>
+            {% endfor %}
+            </ul>
+            <input type="submit" value="Update Text">
+        </form>
+        {% endif %}
+
+        {% if corrected_text %}
+        <h2>Corrected Text</h2>
+        <p>{{ corrected_text }}</p>
+        {% endif %}
+    </div>
+</body>
+</html>
